@@ -1,0 +1,79 @@
+# Arduino UNO-Based Smart Home Safety and Occupancy Monitoring System Using Gas, PIR and Ultrasonic Sensors
+
+## Aim
+To develop a smart home safety and occupancy monitoring system using Arduino UNO, gas sensor, PIR sensor and ultrasonic sensor.
+
+## Components Required
+- Arduino UNO
+- MQ-2 Gas Sensor
+- PIR Motion Sensor (HC-SR501)
+- Ultrasonic Sensor (HC-SR04)
+- Buzzer
+- Red LED
+- Green LED
+- 220Ω Resistors
+- Breadboard
+- Jumper Wires
+- USB Cable
+
+## Description
+This project monitors indoor safety conditions and detects human presence using three sensors.
+
+- **Gas Sensor (MQ-2):** Detects combustible gases and smoke.
+- **PIR Sensor:** Detects human movement using infrared radiation.
+- **Ultrasonic Sensor:** Measures the distance of nearby objects to assist occupancy detection.
+
+The Arduino UNO processes sensor readings and provides alerts through LEDs, a buzzer and the Serial Monitor.
+
+## Connections
+
+| Component | Arduino UNO Pin |
+|---|---|
+| MQ-2 AO | A0 |
+| PIR OUT | D2 |
+| Ultrasonic TRIG | D3 |
+| Ultrasonic ECHO | D4 |
+| Buzzer (+) | D8 |
+| Red LED | D9 |
+| Green LED | D10 |
+| All GND | GND |
+| Sensor VCC | 5V (as supported by module) |
+
+## Working Principle
+1. The gas sensor continuously monitors gas levels.
+2. The PIR sensor detects movement inside the monitored area.
+3. The ultrasonic sensor measures the distance of nearby objects.
+4. The Arduino determines occupancy based on PIR motion or an object detected within the configured distance.
+5. If the gas level exceeds the threshold, the buzzer and red LED are activated.
+6. The green LED indicates normal gas conditions.
+7. Sensor readings and system status are displayed on the Serial Monitor.
+
+## Procedure
+1. Connect all sensors and components to the Arduino UNO.
+2. Open Arduino IDE.
+3. Select Arduino UNO as the board.
+4. Select the appropriate COM port.
+5. Upload the Arduino program.
+6. Open the Serial Monitor at 9600 baud.
+7. Test gas detection, motion detection and ultrasonic distance measurement.
+8. Observe the alerts and occupancy status.
+
+## Expected Output
+- Gas level is displayed on the Serial Monitor.
+- Gas detection activates the buzzer and red LED.
+- PIR detects movement.
+- Ultrasonic sensor measures nearby object distance.
+- Occupancy status is displayed as OCCUPIED or NOT OCCUPIED.
+- Green LED indicates normal gas conditions.
+
+## Result
+Thus, a smart home safety and occupancy monitoring system using Arduino UNO, gas sensor, PIR sensor and ultrasonic sensor was implemented successfully.
+
+## Applications
+- Smart home monitoring
+- Gas leakage warning systems
+- Indoor occupancy monitoring
+- Home safety automation
+
+## Note
+The gas threshold and ultrasonic occupancy distance should be calibrated according to the environment. This prototype is for educational demonstration and is not a replacement for certified gas or fire safety alarms.
