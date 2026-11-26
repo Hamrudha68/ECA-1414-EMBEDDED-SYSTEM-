@@ -1,31 +1,71 @@
-# Experiment 5 – GPIO Configuration, Switch Input and LED Output with Bit-Level Manipulation using LPC2148 Kit
 
-## Aim
-To configure GPIO pins of the LPC2148 microcontroller and control LED output based on switch input using bit-level manipulation.
+#include <LPC214x.h>
 
-## Components Required
-- LPC2148 Development Kit
-- Push Button Switch
-- LED
-- Connecting Wires
-- Power Supply
-- Keil µVision IDE
+// Pin Configuration
+#define SWITCH_PIN (1 << 14)  // P0.14
+#define LED_PIN    (1 << 16)  // P0.16
 
-## Software Required
-- Keil µVision IDE
-- Flash Magic
+// GPIO Initialization
+void GPIO_Init(void)
+{
+    // Configure switch pin as input
+    IO0DIR &= ~SWITCH_PIN;
 
-## Description
-This experiment demonstrates GPIO configuration and digital input/output operations using the LPC2148 microcontroller.
+    // Configure LED pin as output
+    IO0DIR |= LED_PIN;
 
-- **GPIO Configuration:** Configures the required pins as input and output.
-- **Switch Input:** Reads the digital status of the push button.
-- **LED Output:** Controls the LED based on the switch condition.
-- **Bit-Level Manipulation:** Uses bitwise operations to configure and control individual GPIO pins.
+    // Initially turn OFF LED
+    IO0CLR = LED_PIN;
+}
 
-## Working Principle
-1. Configure the switch pin as input.
-2. Configure the LED pin as output.
-3. Read the switch status from the GPIO input register.
-4. Check the switch condition using bitwise operations.
-5. Turn
+// Read Switch Status
+int Read_Switch(void)
+{
+    if(IO0PIN & SWITCH_PIN)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// Turn ON LED
+void LED_ON(void)
+{
+    IO0SET = LED_PIN;
+}
+
+// Turn OFF LED
+void LED_OFF(void)
+{
+    IO0CLR = LED_PIN;
+}
+
+// Main Program
+int main(void)
+{
+    int switch_status;
+
+    // Initialize GPIO
+    GPIO_Init();
+
+    while(1)
+    {
+        // Read switch input
+        switch_status = Read_Switch();
+
+        // Control LED based on switch
+        if(switch_status == 1)
+        {
+            LED_ON();
+        }
+        else
+        {
+            LED_OFF();
+        }
+    }
+
+    return 0;
+}
