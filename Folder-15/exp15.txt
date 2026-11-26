@@ -1,0 +1,106 @@
+
+#include <Arduino.h>
+
+// Queue Handle
+QueueHandle_t dataQueue;
+
+// Task Handles
+TaskHandle_t ProducerTaskHandle;
+TaskHandle_t ConsumerTaskHandle;
+
+// Producer Task
+void ProducerTask(void *parameter)
+{
+    int data = 0;
+
+    while(1)
+    {
+        data++;
+
+        Serial.print("Producer: Sending Data = ");
+        Serial.println(data);
+
+        // Send data to queue
+        if(xQueueSend(dataQueue, &data, portMAX_DELAY) == pdTRUE)
+        {
+            Serial.println("Producer: Data Sent Successfully");
+        }
+        else
+        {
+            Serial.println("Producer: Queue Send Failed");
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+// Consumer Task
+void ConsumerTask(void *parameter)
+{
+    int receivedData;
+
+    while(1)
+    {
+        Serial.println("Consumer: Waiting for Data");
+
+        // Receive data from queue
+        if(xQueueReceive(dataQueue, &receivedData, portMAX_DELAY) == pdTRUE)
+        {
+            Serial.print("Consumer: Received Data = ");
+            Serial.println(receivedData);
+
+            Serial.println("Consumer: Processing Data");
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+// Setup Function
+void setup()
+{
+    Serial.begin(115200);
+
+    delay(1000);
+
+    Serial.println("FreeRTOS Queue Management Started");
+
+    // Create Queue with 5 integer elements
+    dataQueue = xQueueCreate(5, sizeof(int));
+
+    // Check Queue Creation
+    if(dataQueue == NULL)
+    {
+        Serial.println("Queue Creation Failed");
+
+        while(1);
+    }
+
+    Serial.println("Queue Created Successfully");
+
+    // Create Producer Task
+    xTaskCreate(
+        ProducerTask,
+        "Producer Task",
+        2048,
+        NULL,
+        2,
+        &ProducerTaskHandle
+    );
+
+    // Create Consumer Task
+    xTaskCreate(
+        ConsumerTask,
+        "Consumer Task",
+        2048,
+        NULL,
+        1,
+        &ConsumerTaskHandle
+    );
+}
+
+// Main Loop
+void loop()
+{
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}
