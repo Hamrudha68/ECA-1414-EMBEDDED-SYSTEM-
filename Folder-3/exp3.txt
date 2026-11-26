@@ -1,0 +1,74 @@
+
+#include <Wire.h>
+
+#define PULSE_PIN A0
+#define LM75_ADDRESS 0x48
+
+int threshold = 550;
+unsigned long lastBeat = 0;
+float bpm = 0;
+
+float readTemperature()
+{
+  Wire.beginTransmission(LM75_ADDRESS);
+  Wire.write(0x00);
+  Wire.endTransmission();
+
+  Wire.requestFrom(LM75_ADDRESS, 2);
+
+  if (Wire.available() < 2)
+    return -999;
+
+  int16_t raw = (Wire.read() << 8) | Wire.read();
+  raw >>= 5;
+
+  if (raw & 0x0400)
+    raw |= 0xF800;
+
+  return raw * 0.125;
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  Wire.begin();
+
+  Serial.println("HEALTH MONITORING NODE");
+}
+
+void loop()
+{
+  int pulseValue = analogRead(PULSE_PIN);
+  unsigned long currentTime = millis();
+
+  if (pulseValue > threshold &&
+      currentTime - lastBeat > 300)
+  {
+    if (lastBeat != 0)
+    {
+      bpm = 60000.0 / (currentTime - lastBeat);
+    }
+
+    lastBeat = currentTime;
+  }
+
+  float temperature = readTemperature();
+
+  Serial.println("----------------------");
+
+  Serial.print("Pulse Rate: ");
+  Serial.print(bpm);
+  Serial.println(" BPM");
+
+  Serial.print("Temperature: ");
+
+  if (temperature == -999)
+    Serial.println("Sensor Error");
+  else
+  {
+    Serial.print(temperature);
+    Serial.println(" C");
+  }
+
+  delay(500);
+}
