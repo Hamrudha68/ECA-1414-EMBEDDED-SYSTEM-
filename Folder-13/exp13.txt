@@ -1,0 +1,81 @@
+
+#include <Arduino.h>
+
+// Task handles
+TaskHandle_t Task1;
+TaskHandle_t Task2;
+TaskHandle_t Task3;
+
+// High Priority Task
+void HighPriorityTask(void *parameter)
+{
+  while(1)
+  {
+    Serial.println("High Priority Task Running");
+    vTaskDelay(pdMS_TO_TICKS(1000));
+  }
+}
+
+// Medium Priority Task
+void MediumPriorityTask(void *parameter)
+{
+  while(1)
+  {
+    Serial.println("Medium Priority Task Running");
+    vTaskDelay(pdMS_TO_TICKS(1500));
+  }
+}
+
+// Low Priority Task
+void LowPriorityTask(void *parameter)
+{
+  while(1)
+  {
+    Serial.println("Low Priority Task Running");
+    vTaskDelay(pdMS_TO_TICKS(2000));
+  }
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  delay(1000);
+
+  Serial.println("FreeRTOS Task Scheduling Started");
+
+  // Create High Priority Task
+  xTaskCreate(
+    HighPriorityTask,
+    "High Task",
+    2048,
+    NULL,
+    3,
+    &Task1
+  );
+
+  // Create Medium Priority Task
+  xTaskCreate(
+    MediumPriorityTask,
+    "Medium Task",
+    2048,
+    NULL,
+    2,
+    &Task2
+  );
+
+  // Create Low Priority Task
+  xTaskCreate(
+    LowPriorityTask,
+    "Low Task",
+    2048,
+    NULL,
+    1,
+    &Task3
+  );
+}
+
+void loop()
+{
+  // FreeRTOS manages task execution
+  vTaskDelay(pdMS_TO_TICKS(1000));
+}
