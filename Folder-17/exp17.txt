@@ -1,0 +1,124 @@
+
+#include <Arduino.h>
+
+// Pin Configuration
+#define BUTTON_PIN 0
+#define LED_PIN 2
+
+// Task Handles
+TaskHandle_t InterruptTaskHandle;
+TaskHandle_t BackgroundTaskHandle;
+
+// Task Notification
+TaskHandle_t interruptTaskHandle = NULL;
+
+// Interrupt Service Routine
+void IRAM_ATTR ButtonISR()
+{
+    BaseType_t higherPriorityTaskWoken = pdFALSE;
+
+    // Notify high priority task
+    if(interruptTaskHandle != NULL)
+    {
+        vTaskNotifyGiveFromISR(
+            interruptTaskHandle,
+            &higherPriorityTaskWoken
+        );
+    }
+
+    // Request context switch if required
+    if(higherPriorityTaskWoken == pdTRUE)
+    {
+        portYIELD_FROM_ISR();
+    }
+}
+
+// High Priority Interrupt Task
+void InterruptTask(void *parameter)
+{
+    while(1)
+    {
+        // Wait for interrupt notification
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+        Serial.println("Interrupt Detected!");
+        Serial.println("High Priority Task Executing");
+
+        digitalWrite(LED_PIN, HIGH);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        digitalWrite(LED_PIN, LOW);
+
+        Serial.println("Interrupt Task Completed");
+    }
+}
+
+// Low Priority Background Task
+void BackgroundTask(void *parameter)
+{
+    int count = 0;
+
+    while(1)
+    {
+        count++;
+
+        Serial.print("Background Task Running: ");
+        Serial.println(count);
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+// Setup Function
+void setup()
+{
+    Serial.begin(115200);
+
+    delay(1000);
+
+    Serial.println("Interrupt Handling with Priority-Based Scheduling");
+
+    // Configure GPIO pins
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
+
+    digitalWrite(LED_PIN, LOW);
+
+    // Create High Priority Task
+    xTaskCreate(
+        InterruptTask,
+        "Interrupt Task",
+        2048,
+        NULL,
+        3,
+        &InterruptTaskHandle
+    );
+
+    // Share task handle with ISR
+    interruptTaskHandle = InterruptTaskHandle;
+
+    // Create Low Priority Background Task
+    xTaskCreate(
+        BackgroundTask,
+        "Background Task",
+        2048,
+        NULL,
+        1,
+        &BackgroundTaskHandle
+    );
+
+    // Attach GPIO interrupt
+    attachInterrupt(
+        digitalPinToInterrupt(BUTTON_PIN),
+        ButtonISR,
+        FALLING
+    );
+
+    Serial.println("Interrupt System Initialized");
+    Serial.println("Press BOOT button to trigger interrupt");
+}
+
+// Main Loop
+void loop()
+{
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}
