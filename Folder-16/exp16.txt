@@ -1,0 +1,75 @@
+
+#include <Arduino.h>
+
+// Timer Handles
+TimerHandle_t timer1;
+TimerHandle_t timer2;
+
+// Timer Callback for Timer 1
+void Timer1Callback(TimerHandle_t xTimer)
+{
+    Serial.println("Timer 1: Event Triggered");
+    Serial.println("Timer 1: BIT0 Activated");
+}
+
+// Timer Callback for Timer 2
+void Timer2Callback(TimerHandle_t xTimer)
+{
+    Serial.println("Timer 2: Event Triggered");
+    Serial.println("Timer 2: BIT1 Activated");
+}
+
+// Setup Function
+void setup()
+{
+    Serial.begin(115200);
+
+    delay(1000);
+
+    Serial.println("FreeRTOS Software Timer Synchronization Started");
+
+    // Create Timer 1 with 1000 ms period
+    timer1 = xTimerCreate(
+        "Timer1",
+        pdMS_TO_TICKS(1000),
+        pdTRUE,
+        (void *)0,
+        Timer1Callback
+    );
+
+    // Create Timer 2 with 2000 ms period
+    timer2 = xTimerCreate(
+        "Timer2",
+        pdMS_TO_TICKS(2000),
+        pdTRUE,
+        (void *)1,
+        Timer2Callback
+    );
+
+    // Check Timer Creation
+    if(timer1 == NULL || timer2 == NULL)
+    {
+        Serial.println("Timer Creation Failed");
+        while(1);
+    }
+
+    Serial.println("Both Timers Created Successfully");
+
+    // Start Timer 1
+    if(xTimerStart(timer1, 0) == pdPASS)
+    {
+        Serial.println("Timer 1 Started");
+    }
+
+    // Start Timer 2
+    if(xTimerStart(timer2, 0) == pdPASS)
+    {
+        Serial.println("Timer 2 Started");
+    }
+}
+
+// Main Loop
+void loop()
+{
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}
