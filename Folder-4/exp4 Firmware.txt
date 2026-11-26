@@ -1,0 +1,70 @@
+
+#define TEMP_SENSOR A0
+#define FAN_PIN 9
+
+volatile byte pwmDuty = 0;
+volatile byte pwmCount = 0;
+
+float temperature;
+
+ISR(TIMER1_COMPA_vect)
+{
+  pwmCount++;
+
+  if (pwmCount >= 100)
+    pwmCount = 0;
+
+  if (pwmCount < pwmDuty)
+    PORTB |= (1 << PB1);
+  else
+    PORTB &= ~(1 << PB1);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(TEMP_SENSOR, INPUT);
+  pinMode(FAN_PIN, OUTPUT);
+
+  cli();
+
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+
+  OCR1A = 99;
+  TCCR1B |= (1 << WGM12);
+  TCCR1B |= (1 << CS11);
+  TIMSK1 |= (1 << OCIE1A);
+
+  sei();
+}
+
+void loop()
+{
+  int adcValue = analogRead(TEMP_SENSOR);
+
+  temperature = adcValue * (5.0 / 1023.0) * 100.0;
+
+  int duty;
+
+  if (temperature < 25)
+    duty = 0;
+  else if (temperature >= 40)
+    duty = 100;
+  else
+    duty = map((int)(temperature * 10), 250, 400, 0, 100);
+
+  noInterrupts();
+  pwmDuty = duty;
+  interrupts();
+
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" C | Fan PWM: ");
+  Serial.print(duty);
+  Serial.println("%");
+
+  delay(500);
+}
