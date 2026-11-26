@@ -1,0 +1,77 @@
+# Industrial HVAC Control Firmware: ADC Temperature Acquisition and Timer-Interrupt PWM Fan Control
+
+## Aim
+To develop an embedded HVAC control system that acquires temperature using ADC and controls fan speed using timer-interrupt-based PWM.
+
+## Components Required
+- Arduino UNO
+- LM35 Temperature Sensor
+- DC Fan (5V compatible)
+- N-channel MOSFET
+- Flyback Diode
+- Resistors
+- Breadboard
+- Jumper Wires
+- External Fan Power Supply
+
+## Software Required
+- Arduino IDE
+
+## Description
+This project demonstrates temperature-based fan speed control for an industrial HVAC application.
+
+- **LM35 Sensor:** Measures temperature and produces an analog voltage.
+- **ADC:** Converts the analog temperature signal into digital values.
+- **Timer Interrupt:** Generates periodic interrupts for PWM fan control.
+- **PWM Control:** Adjusts fan speed according to the measured temperature.
+
+The Arduino UNO processes temperature readings and adjusts the fan speed automatically.
+
+## Pin Connections
+
+| Component | Arduino UNO Pin |
+|---|---|
+| LM35 Output | A0 |
+| LM35 VCC | 5V |
+| LM35 GND | GND |
+| Fan PWM Control | D9 (OC1A) |
+| Fan Power | External supply |
+| Common Ground | GND |
+
+**Note:** Connect the fan through a suitable MOSFET driver circuit. Never connect a DC fan directly to an Arduino output pin.
+
+## Working Principle
+1. The LM35 sensor measures the surrounding temperature.
+2. Arduino reads the analog voltage through its ADC.
+3. The temperature value is calculated in degrees Celsius.
+4. Timer1 generates periodic interrupts.
+5. PWM duty cycle is adjusted according to temperature.
+6. Fan speed increases as temperature rises.
+
+## Procedure
+1. Connect the LM35 temperature sensor to Arduino UNO.
+2. Connect the fan through a MOSFET driver circuit.
+3. Connect the PWM control signal to pin D9.
+4. Open Arduino IDE.
+5. Select Arduino UNO and the appropriate COM port.
+6. Upload the HVAC control program.
+7. Open the Serial Monitor at 9600 baud.
+8. Observe temperature and fan PWM values.
+
+## Expected Output
+- Temperature readings are displayed on the Serial Monitor.
+- Fan remains OFF at low temperatures.
+- Fan speed increases as temperature rises.
+- PWM duty cycle changes according to temperature.
+
+## Result
+Thus, ADC-based temperature acquisition and timer-interrupt-based PWM fan control were implemented for an embedded HVAC control system.
+
+## Applications
+- Industrial HVAC systems
+- Automatic cooling systems
+- Temperature-controlled ventilation
+- Embedded automation
+
+## Safety Note
+Use a suitable MOSFET driver and external fan supply. This is an educational prototype, not a certified industrial HVAC controller.
