@@ -1,0 +1,91 @@
+
+#define GAS_SENSOR A0
+#define PIR_SENSOR 2
+#define TRIG_PIN 3
+#define ECHO_PIN 4
+#define BUZZER 8
+#define RED_LED 9
+#define GREEN_LED 10
+
+int gasThreshold = 400;
+int occupancyDistance = 150;
+
+long duration;
+float distance;
+int gasValue;
+int motion;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(GAS_SENSOR, INPUT);
+  pinMode(PIR_SENSOR, INPUT);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+
+  Serial.println("SMART HOME SAFETY SYSTEM");
+}
+
+void loop()
+{
+  gasValue = analogRead(GAS_SENSOR);
+  motion = digitalRead(PIR_SENSOR);
+
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH, 30000);
+
+  if (duration == 0)
+    distance = -1;
+  else
+    distance = duration * 0.0343 / 2;
+
+  bool gasAlert = gasValue > gasThreshold;
+
+  bool occupied = motion == HIGH ||
+                  (distance > 0 && distance <= occupancyDistance);
+
+  Serial.println("------------------------");
+
+  Serial.print("Gas Level: ");
+  Serial.println(gasValue);
+
+  Serial.print("Motion: ");
+  Serial.println(motion ? "DETECTED" : "NOT DETECTED");
+
+  Serial.print("Distance: ");
+  if (distance < 0)
+    Serial.println("No Echo");
+  else
+    Serial.print(distance), Serial.println(" cm");
+
+  Serial.print("Occupancy: ");
+  Serial.println(occupied ? "OCCUPIED" : "NOT OCCUPIED");
+
+  if (gasAlert)
+  {
+    Serial.println("WARNING: GAS DETECTED!");
+
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GREEN_LED, LOW);
+    tone(BUZZER, 1000);
+  }
+  else
+  {
+    Serial.println("Gas Condition: NORMAL");
+
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, HIGH);
+    noTone(BUZZER);
+  }
+
+  delay(500);
+}
