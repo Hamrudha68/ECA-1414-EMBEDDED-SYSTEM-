@@ -1,0 +1,28 @@
+# Formal Design of an Embedded Controller Using State Machine (Statechart) Modeling – Traffic Light Controller
+
+## Aim
+To design and implement a traffic light controller using finite state machine (FSM) modeling to control traffic signals in a systematic sequence.
+
+## Components Required
+- Arduino UNO
+- Red LED
+- Yellow LED
+- Green LED
+- 220Ω Resistors
+- Breadboard
+- Jumper Wires
+- USB Cable
+
+## Software Required
+- Arduino IDE
+
+## Description
+This project implements a traffic light controller using a finite state machine approach.
+
+The controller operates through three main states:
+
+- **RED State:** Stops traffic.
+- **GREEN State:** Allows traffic to move.
+- **YELLOW State:** Warns vehicles to prepare to stop.
+
+The system transitions between states after predefined time intervals. The Arduino
