@@ -1,0 +1,68 @@
+# I²C-Based Health Monitoring Node for Pulse and Temperature Acquisition
+
+## Aim
+To develop an embedded health monitoring node that acquires pulse rate and temperature readings using sensors and I²C communication.
+
+## Components Required
+- Arduino UNO
+- Pulse Sensor (Analog Pulse Sensor)
+- LM75 I²C Temperature Sensor
+- Jumper Wires
+- Breadboard
+- USB Cable
+
+## Software Required
+- Arduino IDE
+
+## Description
+This project demonstrates a health monitoring system for acquiring pulse rate and temperature readings.
+
+- **Pulse Sensor:** Detects heartbeat signals and estimates pulse rate in beats per minute (BPM).
+- **LM75 Temperature Sensor:** Measures temperature and communicates with Arduino UNO through the I²C protocol.
+- **Arduino UNO:** Processes sensor readings and displays the measured values through the Serial Monitor.
+
+## Pin Connections
+
+| Component | Arduino UNO Pin |
+|---|---|
+| Pulse Sensor Signal | A0 |
+| LM75 SDA | A4 |
+| LM75 SCL | A5 |
+| LM75 VCC | 5V |
+| LM75 GND | GND |
+| Pulse Sensor VCC | 5V |
+| Pulse Sensor GND | GND |
+
+## Working Principle
+1. The pulse sensor detects heartbeat signals.
+2. Arduino processes the pulse signals to estimate BPM.
+3. The LM75 sensor measures temperature.
+4. Temperature data is transferred through the I²C communication protocol.
+5. Arduino displays pulse rate and temperature readings on the Serial Monitor.
+
+## Procedure
+1. Connect the pulse sensor to analog pin A0.
+2. Connect the LM75 sensor to the I²C pins A4 and A5.
+3. Open Arduino IDE.
+4. Select Arduino UNO and the appropriate COM port.
+5. Upload the program.
+6. Open the Serial Monitor at 9600 baud.
+7. Observe pulse rate and temperature readings.
+
+## Expected Output
+The Serial Monitor displays:
+- Pulse rate in BPM.
+- Temperature in degrees Celsius.
+- Continuous sensor readings.
+
+## Result
+Thus, an I²C-based health monitoring node for pulse and temperature acquisition was implemented using Arduino UNO.
+
+## Applications
+- Educational health monitoring prototypes
+- Embedded sensor interfacing
+- Temperature monitoring
+- Pulse rate measurement
+
+## Note
+This is an educational prototype and is not a medical diagnostic device. Pulse readings depend on sensor placement and signal quality.
