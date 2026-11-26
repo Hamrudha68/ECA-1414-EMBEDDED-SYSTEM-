@@ -1,0 +1,67 @@
+
+#define RED 8
+#define YELLOW 9
+#define GREEN 10
+
+enum State
+{
+  RED_STATE,
+  GREEN_STATE,
+  YELLOW_STATE
+};
+
+State currentState = RED_STATE;
+unsigned long previousTime = 0;
+
+void setup()
+{
+  pinMode(RED, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  unsigned long currentTime = millis();
+
+  switch (currentState)
+  {
+    case RED_STATE:
+      digitalWrite(RED, HIGH);
+      digitalWrite(GREEN, LOW);
+      digitalWrite(YELLOW, LOW);
+
+      if (currentTime - previousTime >= 5000)
+      {
+        currentState = GREEN_STATE;
+        previousTime = currentTime;
+      }
+      break;
+
+    case GREEN_STATE:
+      digitalWrite(RED, LOW);
+      digitalWrite(GREEN, HIGH);
+      digitalWrite(YELLOW, LOW);
+
+      if (currentTime - previousTime >= 5000)
+      {
+        currentState = YELLOW_STATE;
+        previousTime = currentTime;
+      }
+      break;
+
+    case YELLOW_STATE:
+      digitalWrite(RED, LOW);
+      digitalWrite(GREEN, LOW);
+      digitalWrite(YELLOW, HIGH);
+
+      if (currentTime - previousTime >= 2000)
+      {
+        currentState = RED_STATE;
+        previousTime = currentTime;
+      }
+      break;
+  }
+}
