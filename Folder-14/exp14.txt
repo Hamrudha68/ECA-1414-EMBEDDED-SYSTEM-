@@ -1,0 +1,91 @@
+
+#include <Arduino.h>
+
+// Declare Binary Semaphore
+SemaphoreHandle_t binarySemaphore;
+
+// Task handles
+TaskHandle_t ProducerTaskHandle;
+TaskHandle_t ConsumerTaskHandle;
+
+// Producer Task
+void ProducerTask(void *parameter)
+{
+    while(1)
+    {
+        Serial.println("Producer: Generating an event");
+
+        // Give semaphore to signal event
+        xSemaphoreGive(binarySemaphore);
+
+        Serial.println("Producer: Semaphore released");
+
+        vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+}
+
+// Consumer Task
+void ConsumerTask(void *parameter)
+{
+    while(1)
+    {
+        Serial.println("Consumer: Waiting for event");
+
+        // Wait until semaphore is available
+        if(xSemaphoreTake(binarySemaphore, portMAX_DELAY) == pdTRUE)
+        {
+            Serial.println("Consumer: Event received");
+            Serial.println("Consumer: Processing event");
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+// Setup Function
+void setup()
+{
+    Serial.begin(115200);
+
+    delay(1000);
+
+    Serial.println("Binary Semaphore Event Signaling Started");
+
+    // Create Binary Semaphore
+    binarySemaphore = xSemaphoreCreateBinary();
+
+    // Check semaphore creation
+    if(binarySemaphore == NULL)
+    {
+        Serial.println("Semaphore Creation Failed");
+        while(1);
+    }
+
+    Serial.println("Binary Semaphore Created Successfully");
+
+    // Create Producer Task
+    xTaskCreate(
+        ProducerTask,
+        "Producer Task",
+        2048,
+        NULL,
+        2,
+        &ProducerTaskHandle
+    );
+
+    // Create Consumer Task
+    xTaskCreate(
+        ConsumerTask,
+        "Consumer Task",
+        2048,
+        NULL,
+        1,
+        &ConsumerTaskHandle
+    );
+}
+
+// Main Loop
+void loop()
+{
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}
